@@ -1,0 +1,49 @@
+---
+description: Calidad y verificación en Prodaric Accounting. Coherencia con diseño/plan, verificación antes de dar por terminado.
+alwaysApply: true
+---
+
+# Calidad – Prodaric Accounting
+
+**Las reglas de calidad son obligatorias. No se declara completado sin verificar.**
+
+## Principio
+
+La calidad se garantiza con **coherencia con el diseño y el plan** y con **verificación explícita** antes de dar cualquier tarea por terminada. En código de aplicación, las pruebas son requisito previo cuando exista lógica de negocio o API.
+
+## Coherencia con diseño y plan
+
+- **SIEMPRE** revisar [design.md](../../design.md) y [plan.md](../../plan.md) antes de implementar esquemas, funciones o API.
+- **SIEMPRE** alinear decisiones con: ledger como única fuente de verdad, accounting como vistas derivadas, public como API + configurables, roles `prodaric` / `prodaric_sys`.
+- **NUNCA** introducir escritura directa a `ledger`, `accounting` o `sustainability` desde la aplicación; solo vía funciones en `public` (SECURITY DEFINER).
+- **NUNCA** dar por terminado un cambio que contradiga el diseño (schemas, inmutabilidad, checksums, NIIF).
+
+## Verificación antes de declarar completado
+
+Antes de dar cualquier tarea por completada:
+
+- [ ] ¿El cambio es coherente con [design.md](../../design.md) y [plan.md](../../plan.md)?
+- [ ] ¿Se ejecutaron las pruebas existentes (si las hay) y pasan?
+- [ ] ¿Se revisó lint/errores en los archivos tocados?
+- [ ] ¿Se explicó al usuario qué se hizo y, si algo no se hizo, por qué?
+
+**NUNCA** declarar completado sin haber verificado al menos lo anterior. Si el proyecto define `ng build` u otro comando de verificación, ejecutarlo antes de dar por terminado.
+
+## Pruebas (cuando exista código de aplicación)
+
+- **SIEMPRE** que se añada lógica de negocio o API: escribir o actualizar pruebas que fallen primero (Red), luego implementar el mínimo para que pasen (Green), luego refactorizar manteniendo verde (Refactor).
+- **SIEMPRE** nombres de pruebas descriptivos: qué se prueba y bajo qué condición (ej. `test_ledger_rejects_unbalanced_entry`, `test_public_function_returns_204_on_valid_input`).
+- **SIEMPRE** verificar que las pruebas cubren el requerimiento o la regla de negocio (partida doble, elementos NIIF, período abierto, etc.).
+- **NUNCA** dar por terminada una funcionalidad si las pruebas relacionadas fallan o no existen cuando el diseño exige esa funcionalidad.
+
+## Código y convenciones
+
+- **SIEMPRE** seguir las convenciones de nombres y estructura indicadas en [.cursor/context.md](../../context.md) y en el diseño (schemas, nombres de funciones, vistas).
+- **SIEMPRE** documentar en código o en migraciones el propósito de funciones que escriben en `ledger` (validación NIIF, checksum).
+- **NUNCA** dejar comentarios o código temporal que contradigan el modelo (ej. INSERT directo a `ledger` desde la app).
+
+## Referencias
+
+- Diseño: [design.md](../../design.md).
+- Plan: [plan.md](../../plan.md).
+- Contexto: [.cursor/context.md](../../context.md).

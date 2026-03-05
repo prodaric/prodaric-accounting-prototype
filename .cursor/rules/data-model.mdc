@@ -1,0 +1,79 @@
+---
+description: Convenciones del modelo de datos en Prodaric Accounting. Todo en inglés (tablas, columnas, funciones, etc.); comentarios pueden ir en español para explicar.
+alwaysApply: true
+---
+
+# Modelo de datos – Prodaric Accounting
+
+**Convenciones obligatorias para tablas, columnas, funciones y cualquier otro elemento del modelo. Aplicar en schemas `ledger`, `accounting`, `public`, `sustainability`.**
+
+## Todo el modelo en inglés
+
+- **SIEMPRE** el modelo de datos está escrito en **inglés**. Esto incluye:
+  - Tablas, columnas, schemas.
+  - **Funciones**, procedimientos, triggers, vistas, secuencias, tipos, y cualquier otro objeto de BD.
+  - Nombres de parámetros y variables en funciones/procedimientos.
+- Cuando haga falta **describir** un elemento (qué hace, por qué existe, detalle de negocio), usar el **comentario** del elemento (`COMMENT ON TABLE`, `COMMENT ON COLUMN`, `COMMENT ON FUNCTION`, etc.).
+- **El comentario puede ir en español** y sirve solo para explicar; el nombre del elemento sigue en inglés.
+
+Ejemplo:
+```sql
+COMMENT ON FUNCTION public.register_entry(jsonb) IS 'Registra un asiento en ledger validando partida doble y reglas NIIF. Solo escritura vía esta función.';
+```
+
+## Idioma y formato de nombres
+
+- **SIEMPRE** nombres en **inglés** para evitar problemas con tildes o acentos en BD y código.
+- **SIEMPRE** todo en **minúsculas**: tablas, columnas, schemas, funciones (salvo que el motor exija otro formato).
+- **NUNCA** usar acentos ni caracteres especiales en nombres de objetos.
+
+## Una palabra cuando sea posible
+
+- **Preferir una palabra** en lugar de dos, tanto para tablas como para columnas, cuando el significado siga siendo claro.
+- Ejemplos:
+  - **Correcto:** `account` (no `acc` ni `chart_of_accounts` para la tabla de cuentas), `journal` (no `journal_book` ni `libro_diario`), `birthdate` (no `birth_date` ni `fecha_de_nacimiento`).
+  - **Correcto:** `entity`, `period`, `balance`, `entry`, `line`.
+  - Cuando dos palabras sean necesarias para evitar ambigüedad, usarlas (ej. `reporting_entity`, `entry_line`).
+
+## Nombres descriptivos y sin abreviaturas
+
+- **SIEMPRE** nombres **descriptivos**; evitar abreviaturas por pereza (ej. `account` no `acc`, `transaction` no `trx` salvo que sea término de dominio aceptado).
+- **SIEMPRE** que un nombre no sea suficientemente claro, documentar con **COMMENT** en la tabla o en la columna (no dejar ambigüedad por no escribir bien el nombre).
+
+Ejemplo de COMMENT (el texto del comentario puede ir en español para explicar):
+```sql
+COMMENT ON TABLE ledger.entry IS 'Asiento inmutable del libro diario. Una fila por transacción; las líneas están en entry_line.';
+COMMENT ON COLUMN ledger.entry_line.amount IS 'Monto con signo: positivo = débito, negativo = crédito para la cuenta.';
+COMMENT ON FUNCTION public.register_entry(jsonb) IS 'Registra un asiento en ledger; valida partida doble y reglas NIIF antes de insertar.';
+```
+
+## Tablas en singular
+
+- **SIEMPRE** nombres de tablas en **singular**.
+- Ejemplos: `user` (no `users`), `account` (no `accounts`), `entry` (no `entries`), `entry_line` (no `entry_lines`). La tabla contiene muchas filas pero el nombre de la entidad es singular.
+
+## Relaciones y claves foráneas
+
+- **SIEMPRE** la referencia a la clave primaria de otra tabla se nombra como **`<tabla>_id`**, donde `<tabla>` es el nombre de la tabla referenciada en singular.
+- Ejemplos:
+  - Tabla `user`, PK `id` → en otra tabla la FK es **`user_id`**.
+  - Tabla `account`, PK `id` → en `entry_line` la columna es **`account_id`**.
+  - Tabla `entry`, PK `id` → en `entry_line` la columna es **`entry_id`**.
+- **NUNCA** usar nombres genéricos como `id_ref`, `parent_id` (salvo que sea jerarquía genérica); preferir `account_id`, `period_id`, etc.
+
+## Resumen rápido
+
+| Regla | Ejemplo correcto | Evitar |
+|-------|------------------|--------|
+| Inglés, minúsculas | `account`, `birthdate` | `cuenta`, `Fecha_Nacimiento` |
+| Una palabra cuando sea posible | `journal`, `entry`, `period` | `journal_book`, `entry_record` |
+| Sin abreviaturas por pereza | `account`, `transaction` | `acc`, `trx` |
+| Tablas en singular | `user`, `entry_line` | `users`, `entry_lines` |
+| FK = tabla_id | `user_id`, `account_id` | `userId`, `acc_id`, `user_ref` |
+| Si no es obvio | COMMENT (puede ser en español) | Nombres vagos sin comentario |
+| Modelo en inglés | Tablas, columnas, funciones, todo | Nombres en español en la BD |
+
+## Referencias
+
+- Diseño de schemas: [design.md](../../design.md).
+- Contexto: [.cursor/context.md](../../context.md).

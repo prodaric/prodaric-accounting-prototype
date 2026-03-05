@@ -1,0 +1,32 @@
+---
+description: Contexto y restricciones del proyecto Prodaric Accounting (contabilidad NIIF, ledger inmutable, roles PostgreSQL).
+globs: 
+alwaysApply: true
+---
+
+# Prodaric Accounting – Contexto de proyecto
+
+## Identidad
+- **Producto:** Prodaric Accounting. Posicionamiento: Contabilidad, Sostenibilidad y Auditoría.
+- **Estándares:** IFRS/NIIF (contabilidad y sostenibilidad), IAASB/ISA (auditoría). El diseño y las reglas están en [design.md](../../design.md).
+
+## Base de datos PostgreSQL
+- **Base de datos:** `prodaric`.
+- **Usuario aplicación:** `prodaric` – solo acceso al schema `public`. La aplicación debe conectarse con este usuario en runtime.
+- **Usuario sysadmin:** `prodaric_sys` – acceso total a `ledger`, `accounting`, `sustainability`. Migraciones y mantenimiento con este usuario.
+- Script de roles: [sql/01_roles.sql](../../sql/01_roles.sql).
+
+## Schemas y lógica de construcción
+- **`ledger`:** Única fuente de verdad del journal (libro diario). Tablas inmutables con checksum (SHA-256/SHA-1). No se crean asientos fuera de las reglas NIIF/ISA; toda escritura mediante funciones en `public` (SECURITY DEFINER) que validan y luego insertan en `ledger`.
+- **`accounting`:** Solo vistas derivadas (y catálogos de solo lectura si aplica) sobre `ledger`. Sin tablas de hechos de escritura.
+- **`public`:** API: funciones, vistas, secuencias, procedimientos; más tablas/parámetros configurables. El usuario `prodaric` solo tiene privilegios aquí.
+- **`sustainability`:** Tablas de datos ESG; escritura restringida a `prodaric_sys`; la aplicación accede vía funciones/vistas en `public`.
+
+## Restricciones de implementación
+- No implementar escritura directa (INSERT/UPDATE/DELETE) desde la aplicación sobre `ledger`, `accounting` ni `sustainability`. Solo vía funciones definidas en `public` que usen SECURITY DEFINER.
+- Las funciones que registran asientos deben validar: partida doble (débitos = créditos), elemento y naturaleza de cuentas, período abierto, y persistir en `ledger` con checksum.
+- Plan de cuentas: 5 elementos (Activos, Pasivos, Patrimonio, Ingresos, Gastos), extensible. Seed data y plan base según [plan.md](../../plan.md).
+
+## Referencias
+- Diseño completo: [design.md](../../design.md).
+- Plan de implementación: [plan.md](../../plan.md).
