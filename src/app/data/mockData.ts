@@ -3,7 +3,7 @@ import { Entity, Period, Account, Entry, Balance, AuditLogEntry, SustainabilityM
 export const currentUser: User = {
   id: '1',
   name: 'Juan Pérez',
-  email: 'juan.perez@example.com',
+  email: 'juan.perez@coderic.com',
   role: 'accountant'
 };
 
@@ -17,7 +17,8 @@ export const periods: Period[] = [
   { id: '1', entity_id: '1', from: '2026-01-01', to: '2026-12-31', status: 'open' },
   { id: '2', entity_id: '1', from: '2025-01-01', to: '2025-12-31', status: 'closed' },
   { id: '3', entity_id: '2', from: '2026-01-01', to: '2026-12-31', status: 'open' },
-  { id: '4', entity_id: '3', from: '2026-01-01', to: '2026-12-31', status: 'open' }
+  { id: '4', entity_id: '3', from: '2026-01-01', to: '2026-12-31', status: 'open' },
+  { id: '5', entity_id: '1', from: '2024-01-01', to: '2024-12-31', status: 'closed' }
 ];
 
 export const accounts: Account[] = [

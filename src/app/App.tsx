@@ -14,6 +14,7 @@ import { AuditLog } from './components/AuditLog';
 import { Sustainability } from './components/Sustainability';
 import { EntryDetail } from './components/EntryDetail';
 import { ClosePeriod } from './components/ClosePeriod';
+import { ReverseEntry } from './components/ReverseEntry';
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="/journal" element={<Journal />} />
           <Route path="/ledger" element={<Ledger />} />
           <Route path="/ledger/:id" element={<EntryDetail />} />
+          <Route path="/reverse-entry" element={<ReverseEntry />} />
           <Route path="/balance" element={<Balance />} />
           <Route path="/trial-balance" element={<TrialBalance />} />
           <Route path="/reports" element={<Reports />} />

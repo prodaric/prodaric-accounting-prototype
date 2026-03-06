@@ -37,10 +37,13 @@ export function EntryDetail() {
           <h1 className="text-2xl font-semibold">Entry #{entry.id}</h1>
         </div>
         {canReverse && (
-          <button className="flex items-center gap-2 px-3 py-1.5 bg-[#e0e0e0] hover:bg-[#d0d0d0] border border-[#c0c0c0] rounded text-sm">
+          <Link
+            to={`/reverse-entry?entry=${entry.id}`}
+            className="flex items-center gap-2 px-3 py-1.5 bg-[#e0e0e0] hover:bg-[#d0d0d0] border border-[#c0c0c0] rounded text-sm"
+          >
             <RotateCcw size={16} />
             Reverse Entry
-          </button>
+          </Link>
         )}
       </div>
 

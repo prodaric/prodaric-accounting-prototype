@@ -1,4 +1,0 @@
-* xref:index.adoc[Inicio]
-* xref:example-business-model.adoc[Modelo de negocio de ejemplo]
-* xref:wireframes.adoc[Wireframes]
-* xref:architecture.adoc[Arquitectura]
